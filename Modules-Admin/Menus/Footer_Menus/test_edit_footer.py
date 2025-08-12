@@ -1,0 +1,116 @@
+import time
+import allure
+import pytest
+from conftest import *
+from allure_commons.types import AttachmentType
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+from selenium.webdriver import ActionChains, Keys
+
+from selenium.webdriver.firefox.webdriver import WebDriver
+
+from utilities.readProp import ReadConfig
+
+import glob
+import os
+
+@pytest.mark.usefixtures("browser_setup")
+class TestAFooterEdit:
+    
+    driver: WebDriver
+
+    # # image and video local path
+    # base_dir = os.path.join(os.getcwd(), "tmp")
+    # imageFile_path_9_16 = os.path.join(base_dir, "9_16.jpg")
+    # imageFile1280_720_path = os.path.join(base_dir, "1280_720 px.png")
+    # videoFile_path = os.path.join(base_dir, "sample2.mp4")
+    # pdfFile_path = os.path.join(base_dir, "sample2.pdf")
+    # subFile_path = os.path.join(base_dir, "sample2.srt")
+    # # video path
+    # names = os.path.abspath(os.path.join(base_dir, "sample1.mp4"))
+
+                 # *******Server Path*******#    
+    base_dir = os.path.join(os.getcwd(), "/home/automationflickn/public_html/tmp")
+    imageFile_path_9_16 = os.path.join(base_dir, "9_16.jpg")
+    imageFile1280_720_path = os.path.join(base_dir, "1280_720 px.png")
+    imageFile480_path = os.path.join(base_dir,"tmp\sample2_480.png")
+    videoFile_path = os.path.join(base_dir, "sample2.mp4")
+    pdfFile_path = os.path.join(base_dir, "sample2.pdf")
+    subFile_path = os.path.join(base_dir, "sample2.srt")
+    # video path
+    names = os.path.abspath(os.path.join(base_dir, "sample1.mp4")) 
+
+    email_element = "//div[contains(@class,'shadow border border-1 theme-border-color p-4 rounded-3 col-11 col-lg-6 col-xl-4 mx-auto')]//input[contains(@placeholder,'email')]" #XPATH
+    password_element =  "//input[contains(@placeholder,'Enter Password')]" #XPATH
+    login_btn_element = "//span[normalize-space()='login']" #XPATH
+
+    all_menu_element = "//span[normalize-space()='Menu']"
+    footer_menu_element = "//span[normalize-space()='Footer Menus']"
+
+    add_footer_element = "//button[normalize-space()='Add Footer Menu']"
+
+    footer_menu_name_element = "//div[@class=' text-start']//input[1]"
+    menu_item_url_element = "//input[@id='link']"
+    column_position_element = "//select[@id='column_position']"
+
+    edit_menu_btn_element = "//div[text()='Test Footer']//ancestor::tr//span[@class='editdropdown-button']"
+    edit_btn_element = "//div[text()='Test Footer']//ancestor::tr//span[text()='Edit Menu']"
+
+    update_btn_element = "//button[text()='Update Menu']"
+
+    def setup_class(self):
+        self.driver.get("https://admin-flick.flicknexs.com/login") #Enter website url
+        self.driver.maximize_window()
+
+    def test_EditUser(self):        
+
+        action = ActionChains(self.driver)
+        
+        WebDriverWait(self.driver, 15).until(lambda driver: driver.current_url == "https://admin-flick.flicknexs.com/login")
+        
+        self.driver.find_element(By.XPATH, self.email_element).send_keys(ReadConfig.getAdminId())
+        self.driver.find_element(By.XPATH, self.password_element).send_keys(ReadConfig.getPassword())
+        self.driver.find_element(By.XPATH, self.login_btn_element).click()
+
+        time.sleep(5)
+
+        WebDriverWait(self.driver, 120).until(EC.visibility_of_element_located((By.XPATH, self.all_menu_element)))
+        allmenu = self.driver.find_element(By.XPATH, self.all_menu_element)
+        self.driver.execute_script("arguments[0].scrollIntoView(false);", allmenu)
+        time.sleep(2)
+        allmenu.click()
+
+        footer_menu = self.driver.find_element(By.XPATH, self.footer_menu_element)
+        self.driver.execute_script("arguments[0].scrollIntoView(false);", footer_menu)
+        time.sleep(2)
+        footer_menu.click()
+        time.sleep(2)
+
+        WebDriverWait(self.driver, 120).until(EC.visibility_of_element_located((By.XPATH, self.edit_menu_btn_element))).click()
+        time.sleep(1)
+
+        WebDriverWait(self.driver, 120).until(EC.visibility_of_element_located((By.XPATH, self.edit_btn_element))).click()
+        time.sleep(3)
+
+        WebDriverWait(self.driver, 120).until(EC.visibility_of_element_located((By.XPATH, self.update_btn_element))).click()
+        time.sleep(2)
+        allure.attach(self.driver.get_full_page_screenshot_as_png(), name= "Edit Footer Menu Page", attachment_type= AttachmentType.PNG)
+
+        time.sleep(10)
+
+        allure.attach(self.driver.get_full_page_screenshot_as_png(), name= "Edit Footer Menu Is Successfull", attachment_type= AttachmentType.PNG)
+
+        
+
+    def teardown_class(self):
+        """Close the browser"""
+        try:
+            self.driver.quit()
+        except AttributeError:
+            print("Driver was not initialized.")  
+ 
+ 

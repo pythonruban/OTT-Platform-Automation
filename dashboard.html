@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Test Dashboard</title>
+    <style>
+        body { display: flex; font-family: Arial; margin: 0; height: 100vh; }
+        .left, .right { width: 20%; padding: 20px; background: #f4f4f4; overflow-y: auto; }
+        .center { width: 60%; padding: 20px; }
+        pre { background: #000; color: #0f0; padding: 10px; height: 300px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <div class="left">
+        <h3>Modules</h3>
+        <ul>
+            {% for module in modules %}
+                <li>{{ module }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="center">
+        <h3>Run Test Command</h3>
+        <input type="text" id="cmd" placeholder="pytest tests/" style="width: 80%;">
+        <button onclick="runCommand()">Run</button>
+        <pre id="terminal">Output will appear here...</pre>
+    </div>
+
+    <div class="right">
+        <h3>Allure Report Summary</h3>
+        <div id="report">
+            <p>Total: <span id="total">--</span></p>
+            <p>Passed: <span id="passed">--</span></p>
+            <p>Failed: <span id="failed">--</span></p>
+        </div>
+        <button onclick="loadReport()">Refresh Report</button>
+    </div>
+
+    <script>
+        function runCommand() {
+            let cmd = document.getElementById("cmd").value;
+            fetch("/run", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ command: cmd })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("terminal").innerText = data.stdout || data.stderr;
+                loadReport();
+            });
+        }
+
+        function loadReport() {
+            fetch("/get-report")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("report").innerHTML = data.error;
+                    } else {
+                        document.getElementById("total").innerText = data.total;
+                        document.getElementById("passed").innerText = data.passed;
+                        document.getElementById("failed").innerText = data.failed;
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

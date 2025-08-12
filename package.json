@@ -1,0 +1,31 @@
+{
+  "name": "vodwebsite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://tharun25@bitbucket.org/automationwebnexs/vodwebsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://bitbucket.org/automationwebnexs/vodwebsite/issues"
+  },
+  "homepage": "https://bitbucket.org/automationwebnexs/vodwebsite#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.2.0",
+    "playwright": "^1.54.2"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "playwright-core": "^1.54.2",
+    "undici-types": "^7.10.0"
+  }
+}
